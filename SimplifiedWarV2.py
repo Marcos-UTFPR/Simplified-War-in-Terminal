@@ -74,11 +74,12 @@ class card:
 
 class territory:
     #Atributos: owner, armies, neighbors, name
-    def __init__(self, name, neighbors=None):
+    def __init__(self, name, map, neighbors=None):
         self.owner = None  # Player atual no controle (vazio por default)
         self.armies = [] # Quantos armies estão no território atualmente, array de army
         self.neighbors = neighbors if neighbors is not None else [] # neighbors é um array de territórios
         self.name = name # Nome do território
+        self.map = map # Mapa que representa o território
 
     def __iter__(self):
         return self
@@ -91,6 +92,11 @@ class territory:
         else:
             return self.owner.color+f"{self.name}"+END
         
+    # ---------------------------------------
+
+    def update_map_color(self):
+        self.map.update_color(self.owner.color)
+
     # ---------------------------------------
     
     def set_neighbor(self, neighbor):
@@ -161,6 +167,7 @@ class territory:
             gameMain.check_death(self.owner, new_owner) # Checa se o antigo dono morreu ou não
         new_owner.get_territory(self)
         self.owner = new_owner
+        self.update_map_color()
         new_owner.get_card() # Ganha uma carta por capturar um território
 
     # ---------------------------------------
@@ -444,6 +451,7 @@ class world:
         i = 0
         for player in self.game.players: # Colocando os territórios e tropas iniciais
             temp_list[i].set_owner(player)
+            temp_list[i].update_map_color()
             for j in range(0, STARTING_ARMIES): # Cinco armies por player (default)
                 army(player, temp_list[i])
             i += 1
@@ -460,7 +468,7 @@ class world:
 
 class game:
     #Atributos: current_round, current_player, territories, player e world
-    def __init__(self, list_of_players, territories):
+    def __init__(self, list_of_players, territories, map):
         self.current_round = 1
         self.current_player_number = 0
         self.current_player = list_of_players[self.current_player_number] # Array de players
@@ -468,6 +476,7 @@ class game:
         self.players = list_of_players
         self.world = world(self, self.territories) # Game cria o mundo, mundo contêm os territórios, que contêm as conexões
         self.exchanges = 0 # Número de trocas já realizadas até o momento atual
+        self.map = map # Mapa do mundo completo
 
     # ---------------------------------------
 
@@ -498,6 +507,7 @@ class game:
 
     def round(self):
         print(f"--------- Round {self.current_round} ---------")
+        self.map.print()
         self.world.print()
         self.current_player = self.players[self.current_player_number]
         self.current_player.print()
@@ -572,13 +582,176 @@ def doNothing():
 
 # -------
 
+def clear(): # Limpa o terminal
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+# Variáveis Globais ----------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+# ╚╔║╝╗═
+# ♣ ♥ ♦ ♠
+
+complete_art =  "\n" \
+"                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣄⣠⣀⡀⣀⣠⣤⣤⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⢠⣠⣼⣿⣿⣿⣟⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀⠀⢠⣤⣦⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠰⢦⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣟⣾⣿⣽⣿⣿⣅⠈⠉⠻⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⠀⠀⠉⠀⠀⠀⠀⠀⢀⡶⠒⢉⡀⢠⣤⣶⣶⣿⣷⣆⣀⡀⠀⢲⣖⠒⠀⠀⠀⠀⠀⠀⠀\n" \
+"⢀⣤⣾⣶⣦⣤⣤⣶⣿⣿⣿⣿⣿⣿⣽⡿⠻⣷⣀⠀⢻⣿⣿⣿⡿⠟⠀⠀⠀⠀⠀⠀⣤⣶⣶⣤⣀⣀⣬⣷⣦⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣤⣦⣼⣀⠀\n" \
+"⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠓⣿⣿⠟⠁⠘⣿⡟⠁⠀⠘⠛⠁⠀⠀⢠⣾⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠏⠙⠁\n" \
+"⠀⠸⠟⠋⠀⠈⠙⣿⣿⣿⣿⣿⣿⣷⣦⡄⣿⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⣼⣆⢘⣿⣯⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡉⠉⢱⡿⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⡿⠦⠀⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡗⠀⠈⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣉⣿⡿⢿⢷⣾⣾⣿⣞⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⣠⠟⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⠿⠿⣿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣾⣿⣿⣷⣦⣶⣦⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠈⠛⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠻⣿⣤⡖⠛⠶⠤⡀⠀⠀⠀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁⠙⣿⣿⠿⢻⣿⣿⡿⠋⢩⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠙⠧⣤⣦⣤⣄⡀⠀⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠘⣧⠀⠈⣹⡻⠇⢀⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣤⣀⡀⠀⠀⠀⠀⠀⠀⠈⢽⣿⣿⣿⣿⣿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠹⣷⣴⣿⣷⢲⣦⣤⡀⢀⡀⠀⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⣿⣿⣷⢀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠂⠛⣆⣤⡜⣟⠋⠙⠂⠀⠀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⠟⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⠉⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣤⣾⣿⣿⣿⣿⣆⠀⠰⠄⠀⠉⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⠿⠿⣿⣿⣿⠇⠀⠀⢀⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠛⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⡇⠀⠀⢀⣼⠗⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠁⠀⠀⠀\n" \
+"⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
+
+south_america_art = [ "⠀⠀⢠⣿⣿⣿⣿⣿⣤⣀⡀",
+                      "⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⠟⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⠟⠀",
+                      "⠀⠀⠀⠀⠀⠀⣸⣿⣿⡿⠃⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢀⣿⡿⠛⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢸⣿⠃⣀⠀⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠀"]
+
+central_america_art = [ "⣤⡖⠛⠶⠤⡀⠀⠀⠀⠀",
+                "⠀⠀⠀⠀⠈⠙⠧⣤⣦⣤⣄⡀⠀⠀"]
+
+north_america_art = ["⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⢠⣠⣼⣿⣿⣿⣟⣿",
+                     "⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⣟⣾⣿⣽⣿⣿⣅",
+                     "⢀⣤⣾⣶⣦⣤⣤⣶⣿⣿⣿⣿⣿⣿⣽⡿⠻⣷⣀⠀",
+                     "⠈⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠓⣿⣿⠟⠁",
+                     "⠀⠸⠟⠋⠀⠈⠙⣿⣿⣿⣿⣿⣿⣷⣦⡄⣿⣿⣿⣆",
+                     "⠀⠀⠀⠀⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⡿⠦",
+                     "⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⠋⠁",
+                     "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⠿⠿⣿⠁⠀",
+                     "⠀⠀⠀⠀⠉⠻⣿" ]
+
+oceania_art =       ["⠀⣤⣾⣿⣿⣿⣿⣆⠀⠰⠄⠀⠉",
+                     "⠀⢻⣿⠿⠿⣿⣿⣿⠇⠀⠀⢀⠀⠀⠀",
+                     "⠀⠈⢻⡇⠀⠀⢀⣼⠗⠀",
+                     "⠀⠀⠀⠙⠁⠀⠀⠀"]
+
+sahara_art = ["⠀⠀⠀⠀⣀⣾⣿⣿⣷⣦⣶⣦⣼⣿⣿⣿⣿",
+              "⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁",
+              "⠀⠘⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀" ]
+
+lower_africa_arts = ["⠀⠈⢽⣿⣿⣿⣿⣿⠋⠀",
+                     "⠀⠀⢸⣿⣿⣿⣿⣷⢀⡄⠀⠀",
+                     "⠀⠘⣿⣿⣿⣿⠉⣿⠃",
+                     "⠀⠀⠀⢹⣿⡿⠃⠀⠀⠀⠀⠀" ]
+
+greenland_arts = ["⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀",
+                     "⠈⠉⠻⣿⣿⣿⣿⣿⡿⠇⠀⠀",
+                     "⢻⣿⣿⣿⡿⠟⠀",
+                     "⠘⣿⡟⠁⠀⠘⠛⠁⠀" ]
+
+europe_arts = ["⠀⠀⠀⠀⠀⢀⡶⠒",
+                     "⠀⠀⠀⣤⣶⣶⣤⣀⣀⣬⣷",
+                     "⠀⢠⣾⣿⢿⣿⣿⣿⣿⣿⣿",
+                     "⠀⣼⣆⢘⣿⣯⣼⣿⣿⣿⣿⣿⣿",
+                     "⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+                     "⠀⢿⣿⣉⣿⡿⢿⢷⣾⣾⣿⣞⣿" ]
+
+upper_asia_arts = ["⠀⠰⢦⣄⠀⠀⠀⠀⠀⠀",
+                     "⢉⡀⢠⣤⣶⣶⣿⣷⣆⣀⡀⠀⢲⣖⠒⠀⠀⠀⠀⠀⠀⠀",
+                     "⣦⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣤⣦⣼⣀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠏⠙⠁",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡉⠉⢱⡿⠀⠀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡗⠀⠈⠀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⣠⠟⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠈⠛⠁⠀⠀⠀" ]
+
+lower_asia_arts = ["⠙⣿⣿⠿⢻⣿⣿⡿⠋⢩⠀⠀⠀",
+                     "⠀⠘⣧⠀⠈⣹⡻⠇⢀⣿⡆⠀⠀",
+                     "⠀⠀⠀⠀⠹⣷⣴⣿⣷⢲⣦⣤⡀⢀⡀⠀⠀",
+                     "⠀⠈⠉⠂⠛⣆⣤⡜⣟⠋⠙⠂⠀⠀⠀⠀" ]
+
+artic_island_arts = ["⢀⣀⣄⣠⣀⡀⣀⣠⣤⣤⣤⣀⠀⠀",
+                     "⢠⣤⣦⡄",
+                     "⠀⠉⠀⠀⠀⠀⠀⢀⡶⠒" ]
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+# Classes do Mapa ------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------
+
+class fragment:
+    def __init__(self, color, arts=None):
+        self.color = color
+        self.original_arts = arts if arts is not None else []
+        self.modified_arts = []
+        for i in self.original_arts:
+            self.modified_arts.append(i.replace(i,color+i+END))
+
+    def alter(self,art):
+        assert (str(type(art)).lower() == "<class 'str'>")
+        for i in self.original_arts:
+            art = art.replace(i, self.modified_arts[self.original_arts.index(i)])
+        return art
+    
+    def update_color(self, new_color):
+        assert (str(type(new_color)).lower() == "<class 'str'>")
+        previous_color = self.color
+        self.color = new_color
+        for i in range(0,len(self.modified_arts)):
+            self.modified_arts[i] = self.modified_arts[i].replace(previous_color,self.color)
+
+    def __iter__(self):
+        return self
+
+# ----------------------------------------------------------------------------------------------------
+
+class complete_artpiece:
+    def __init__(self, art, fragments=None):
+        self.art = art
+        self.fragments = fragments if fragments is not None else []
+
+    def original_print(self):
+        print(self.art)
+
+    def print(self):
+        final_art = self.art
+        for i in self.fragments:
+            #print(i.color+"Teste"+END) # Mostra a cor de cada fragmento
+            final_art = i.alter(final_art)
+        print(final_art)
+
+    def __iter__(self):
+        return self
+
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 # Função Main ----------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def main():
-    os.system('cls' if os.name == 'nt' else 'clear') # Limpa o terminal
+    clear() # Limpa o terminal
     print("------------------ War Game in Console Terminal ------------------")
+
+    # --------------------------------------- Preparando o mapa ---------------------------------------
+
+    # Em resumo, complete_artpiece armazena a arte completa enquanto que fragments armazenam os trechos que devem ter a cor alterada
+    south_america_fragment = fragment(BOLD, south_america_art) # Funciona
+    central_america_fragment = fragment(BOLD, central_america_art) # Funciona
+    north_america_fragment = fragment(BOLD, north_america_art) # Funciona
+    oceania_fragment = fragment(BOLD, oceania_art) # Funciona
+    sahara_fragment = fragment(BOLD, sahara_art) # Funciona
+    lower_africa_fragment = fragment(BOLD, lower_africa_arts) # Funciona
+    greenland_fragment = fragment(BOLD, greenland_arts)
+    europe_fragment = fragment(BOLD, europe_arts)
+    upper_asia_fragment = fragment(BOLD, upper_asia_arts)
+    lower_asia_fragment = fragment(BOLD, lower_asia_arts)
+    artic_island_fragment = fragment(BOLD, artic_island_arts)
+    fragments = [south_america_fragment,central_america_fragment,north_america_fragment,oceania_fragment,sahara_fragment,lower_africa_fragment, greenland_fragment, artic_island_fragment, europe_fragment, lower_asia_fragment, upper_asia_fragment]
+
+    world_map = complete_artpiece(complete_art, fragments)
+    #world_map.original_print()
+    world_map.print()
 
     # --------------------------------------- Definindo jogadores e territórios do mapa ---------------------------------------
     playerGreen = player(color = GREEN)
@@ -588,22 +761,41 @@ def main():
 
     players=[playerGreen,playerBlue,playerRed,playerYellow] # Lista e ordem dos jogadores
 
-    territorOne = territory("Teste 1")
-    territorTwo = territory("Teste 2")
-    territorThree = territory("Teste 3")
-    territorFour = territory("Teste 4")
-    territorFive = territory("Teste 5")
-    territorOne.set_neighbor(territorTwo)
-    territorFour.set_neighbor(territorFive)
-    territorThree.set_neighbor(territorFour)
-    territorThree.set_neighbor(territorTwo)
-    territories = [territorOne, territorTwo, territorThree, territorFour, territorFive]
+    # Criando os territórios
+    south_america = territory("América do Sul", south_america_fragment)
+    central_america = territory("América Central", central_america_fragment)
+    north_america = territory("América do Norte", north_america_fragment)
+    greenland = territory("Groenlândia", greenland_fragment)
+    artic_islands = territory("Ilhas do Ártico", artic_island_fragment)
+    europe = territory("Europa", europe_fragment)
+    upper_asia = territory("Ásia", upper_asia_fragment)
+    lower_asia = territory("Ásia Central", lower_asia_fragment)
+    oceania = territory("Oceania", oceania_fragment)
+    sahara = territory("Deserto do Saara", sahara_fragment)
+    lower_africa = territory("África Subsaariana", lower_africa_fragment)
+
+    # Criando as conexões
+    south_america.set_neighbor(central_america)
+    central_america.set_neighbor(north_america)
+    north_america.set_neighbor(greenland)
+    greenland.set_neighbor(artic_islands)
+    greenland.set_neighbor(europe)
+    artic_islands.set_neighbor(europe)
+    europe.set_neighbor(upper_asia)
+    europe.set_neighbor(sahara)
+    upper_asia.set_neighbor(lower_asia)
+    upper_asia.set_neighbor(sahara)
+    lower_asia.set_neighbor(sahara)
+    lower_asia.set_neighbor(oceania)
+    sahara.set_neighbor(lower_africa)
+    
+    territories = [south_america, central_america, north_america, greenland, artic_islands, europe, upper_asia, lower_asia, oceania, sahara, lower_africa]
 
     assert len(territories) >= len(players)
 
     # ---------------------------------------
     global gameMain
-    gameMain = game(players, territories) # OBS: Cada jogador começa com um território e cinco armies (por default)
+    gameMain = game(players, territories, world_map) # OBS: Cada jogador começa com um território e cinco armies (por default)
     gameMain.start() # OBS: Selecione o número do território
     # ---------------------------------------
 
