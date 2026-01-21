@@ -78,7 +78,7 @@ class fragment:
     def update_color(self, color):
         assert (str(type(color)).lower() == "<class 'str'>")
         self.color = color
-        
+
     def __iter__(self):
         return self
 
@@ -163,29 +163,61 @@ lower_africa_arts = ["⠀⠈⢽⣿⣿⣿⣿⣿⠋⠀",
                      "⠀⠘⣿⣿⣿⣿⠉⣿⠃",
                      "⠀⠀⠀⢹⣿⡿⠃⠀⠀⠀⠀⠀" ]
 
-continent_model_arts = ["",
-                     "",
-                     "",
-                     "" ]
+greenland_arts = ["⣿⣿⣿⣿⣿⣿⣿⡿⠋⠀⠀",
+                     "⠈⠉⠻⣿⣿⣿⣿⣿⡿⠇⠀⠀",
+                     "⢻⣿⣿⣿⡿⠟⠀",
+                     "⠘⣿⡟⠁⠀⠘⠛⠁⠀" ]
+
+europe_arts = ["⠀⠀⠀⠀⠀⢀⡶⠒",
+                     "⠀⠀⠀⣤⣶⣶⣤⣀⣀⣬⣷",
+                     "⠀⢠⣾⣿⢿⣿⣿⣿⣿⣿⣿",
+                     "⠀⣼⣆⢘⣿⣯⣼⣿⣿⣿⣿⣿⣿",
+                     "⠀⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+                     "⠀⢿⣿⣉⣿⡿⢿⢷⣾⣾⣿⣞⣿" ]
+
+upper_asia_arts = ["⠀⠰⢦⣄⠀⠀⠀⠀⠀⠀",
+                     "⢉⡀⢠⣤⣶⣶⣿⣷⣆⣀⡀⠀⢲⣖⠒⠀⠀⠀⠀⠀⠀⠀",
+                     "⣦⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣦⣤⣦⣼⣀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠏⠙⠁",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡉⠉⢱⡿⠀⠀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⡗⠀⠈⠀⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⣠⠟⠀",
+                     "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠈⠛⠁⠀⠀⠀" ]
+
+lower_asia_arts = ["⠙⣿⣿⠿⢻⣿⣿⡿⠋⢩⠀⠀⠀",
+                     "⠀⠘⣧⠀⠈⣹⡻⠇⢀⣿⡆⠀⠀",
+                     "⠀⠀⠀⠀⠹⣷⣴⣿⣷⢲⣦⣤⡀⢀⡀⠀⠀",
+                     "⠀⠈⠉⠂⠛⣆⣤⡜⣟⠋⠙⠂⠀⠀⠀⠀" ]
+
+artic_island_arts = ["⢀⣀⣄⣠⣀⡀⣀⣠⣤⣤⣤⣀⠀⠀",
+                     "⢠⣤⣦⡄",
+                     "⠀⠉⠀⠀⠀⠀⠀⢀⡶⠒" ]
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 # Seção principal do código --------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def main(): # Função principal
     clear() # Limpa o terminal
+    # Em resumo, complete_artpiece armazena a arte completa enquanto que fragments armazenam os trechos que devem ter a cor alterada
     # ---------------------------------------
     south_america_fragment = fragment(PURPLE, south_america_art) # Funciona
-    central_america_fragment = fragment(YELLOW, central_america_art) # Funciona
+    central_america_fragment = fragment(DARKCYAN, central_america_art) # Funciona
     north_america_fragment = fragment(RED, north_america_art) # Funciona
     oceania_fragment = fragment(GREEN, oceania_art) # Funciona
     sahara_fragment = fragment(BLUE, sahara_art) # Funciona
     lower_africa_fragment = fragment(CYAN, lower_africa_arts) # Funciona
-    fragments = [south_america_fragment,central_america_fragment,north_america_fragment,oceania_fragment,sahara_fragment,lower_africa_fragment]
+    greenland_fragment = fragment(GREEN, greenland_arts)
+    europe_fragment = fragment(RED, europe_arts)
+    upper_asia_fragment = fragment(YELLOW, upper_asia_arts)
+    lower_asia_fragment = fragment(RED, lower_asia_arts)
+    artic_island_fragment = fragment(CYAN, artic_island_arts)
+    fragments = [south_america_fragment,central_america_fragment,north_america_fragment,oceania_fragment,sahara_fragment,lower_africa_fragment, greenland_fragment, artic_island_fragment, europe_fragment, lower_asia_fragment, upper_asia_fragment]
 
-    sahara = complete_artpiece(complete_art, fragments)
-    sahara.original_print()
 
-    sahara.print()
+    world = complete_artpiece(complete_art, fragments)
+    world.original_print()
+
+    world.print()
     # ---------------------------------------
 
 if __name__ == "__main__":
