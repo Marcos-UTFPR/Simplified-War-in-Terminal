@@ -83,6 +83,10 @@ class fragment:
         for i in self.original_arts:
             art = art.replace(i, self.modified_arts[self.original_arts.index(i)])
         return art
+    
+    def update_color(self, color):
+        assert (str(type(color)).lower() == "<class 'str'>")
+        self.color = color
 
     def __iter__(self):
         return self
