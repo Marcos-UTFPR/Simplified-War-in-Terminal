@@ -596,16 +596,35 @@ def main():
 
     players=[playerGreen,playerBlue,playerRed,playerYellow] # Lista e ordem dos jogadores
 
-    territorOne = territory("Teste 1")
-    territorTwo = territory("Teste 2")
-    territorThree = territory("Teste 3")
-    territorFour = territory("Teste 4")
-    territorFive = territory("Teste 5")
-    territorOne.set_neighbor(territorTwo)
-    territorFour.set_neighbor(territorFive)
-    territorThree.set_neighbor(territorFour)
-    territorThree.set_neighbor(territorTwo)
-    territories = [territorOne, territorTwo, territorThree, territorFour, territorFive]
+    # Criando os territórios
+    south_america = territory("América do Sul")
+    central_america = territory("América Central")
+    north_america = territory("América do Norte")
+    greenland = territory("Groenlândia")
+    artic_islands = territory("Ilhas do Ártico")
+    europe = territory("Europa")
+    upper_asia = territory("Ásia")
+    lower_asia = territory("Ásia Central")
+    oceania = territory("Oceania")
+    sahara = territory("Deserto do Saara")
+    lower_africa = territory("África Subsaariana")
+
+    # Criando as conexões
+    south_america.set_neighbor(central_america)
+    central_america.set_neighbor(north_america)
+    north_america.set_neighbor(greenland)
+    greenland.set_neighbor(artic_islands)
+    greenland.set_neighbor(europe)
+    artic_islands.set_neighbor(europe)
+    europe.set_neighbor(upper_asia)
+    europe.set_neighbor(sahara)
+    upper_asia.set_neighbor(lower_asia)
+    upper_asia.set_neighbor(sahara)
+    lower_asia.set_neighbor(sahara)
+    lower_asia.set_neighbor(oceania)
+    sahara.set_neighbor(lower_africa)
+    
+    territories = [south_america, central_america, north_america, greenland, artic_islands, europe, upper_asia, lower_asia, oceania, sahara, lower_africa]
 
     assert len(territories) >= len(players)
 
