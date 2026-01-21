@@ -124,13 +124,13 @@ complete_art =  "\n" \
 "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠁⠀⠀⠀\n" \
 "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
 
-south_america_art = [ "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⣿⣿⣿⣿⣿⣤⣀⡀ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⠟ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⠟ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣸⣿⣿⡿⠃ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠛ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠃⣀ ",
-                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠀",]
+south_america_art = [ "⠀⠀⢠⣿⣿⣿⣿⣿⣤⣀⡀",
+                      "⠀⠀⠀⠀⠀⠀⠈⢿⣿⣿⣿⣿⣿⣿⠟⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢹⣿⣿⣿⣿⠟⠀",
+                      "⠀⠀⠀⠀⠀⠀⣸⣿⣿⡿⠃⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢀⣿⡿⠛⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⢸⣿⠃⣀⠀⠀⠀",
+                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠙⠒⠀"]
 
 central_america_art = [ "⣤⡖⠛⠶⠤⡀⠀⠀⠀⠀",
                 "⠀⠀⠀⠀⠈⠙⠧⣤⣦⣤⣄⡀⠀⠀"]
@@ -145,10 +145,10 @@ north_america_art = ["⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⢠⣠⣼⣿⣿⣿⣟⣿"
                      "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠹⣿⣿⣿⠿⠿⣿⠁⠀",
                      "⠀⠀⠀⠀⠉⠻⣿" ]
 
-oceania_art =       ["   ⣤⣾⣿⣿⣿⣿⣆⠀⠰⠄⠀⠉ ",
-                     "  ⢻⣿⠿⠿⣿⣿⣿⠇⠀⠀⢀⠀",
-                     "  ⠀⠀⠀⠈⢻⡇⠀⠀⢀⣼⠗⠀",
-                     "  ⠀⠀⠀⠀⠙⠁⠀" ]
+oceania_art =       ["⠀⣤⣾⣿⣿⣿⣿⣆⠀⠰⠄⠀⠉",
+                     "⠀⢻⣿⠿⠿⣿⣿⣿⠇⠀⠀⢀⠀⠀⠀",
+                     "⠀⠈⢻⡇⠀⠀⢀⣼⠗⠀",
+                     "⠀⠀⠀⠙⠁⠀⠀⠀"]
 
 sahara_art = ["⠀⠀⠀⠀⣀⣾⣿⣿⣷⣦⣶⣦⣼⣿⣿⣿⣿",
               "⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠁",
@@ -156,7 +156,7 @@ sahara_art = ["⠀⠀⠀⠀⣀⣾⣿⣿⣷⣦⣶⣦⣼⣿⣿⣿⣿",
 
 lower_africa_arts = ["⠀⠈⢽⣿⣿⣿⣿⣿⠋⠀",
                      "⠀⠀⢸⣿⣿⣿⣿⣷⢀⡄⠀⠀",
-                     "⠀⠀⠘⣿⣿⣿⣿⠉⣿⠃⠀⠀",
+                     "⠀⠘⣿⣿⣿⣿⠉⣿⠃",
                      "⠀⠀⠀⢹⣿⡿⠃⠀⠀⠀⠀⠀" ]
 
 continent_model_arts = ["",
@@ -170,12 +170,12 @@ continent_model_arts = ["",
 def main(): # Função principal
     clear() # Limpa o terminal
     # ---------------------------------------
-    south_america_fragment = fragment(PURPLE, south_america_art)
-    central_america_fragment = fragment(YELLOW, central_america_art)
-    north_america_fragment = fragment(RED, north_america_art)
-    oceania_fragment = fragment(GREEN, oceania_art)
-    sahara_fragment = fragment(BLUE, sahara_art)
-    lower_africa_fragment = fragment(BOLD, lower_africa_arts)
+    south_america_fragment = fragment(PURPLE, south_america_art) # Funciona
+    central_america_fragment = fragment(YELLOW, central_america_art) # Funciona
+    north_america_fragment = fragment(RED, north_america_art) # Funciona
+    oceania_fragment = fragment(GREEN, oceania_art) # Funciona
+    sahara_fragment = fragment(BLUE, sahara_art) # Funciona
+    lower_africa_fragment = fragment(CYAN, lower_africa_arts) # Funciona
     fragments = [south_america_fragment,central_america_fragment,north_america_fragment,oceania_fragment,sahara_fragment,lower_africa_fragment]
 
     sahara = complete_artpiece(complete_art, fragments)
