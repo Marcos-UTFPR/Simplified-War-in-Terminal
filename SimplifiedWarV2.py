@@ -23,10 +23,13 @@ BRIGHTBLACK   = '\033[30m'
 WHITE   = '\033[37m'
 MAGENTA = '\033[35m'
 RED = '\033[91m'
+# Estilos de texto
+BLINK = "\033[5m"
 BOLD = '\033[1m'
 UNDERLINE = '\033[4m'
-END = '\033[0m'
-COLORS = [PURPLE, CYAN, DARKCYAN, BLUE, GREEN, YELLOW, RED, MAGENTA, BLACK, BRIGHTBLACK, WHITE, BOLD, UNDERLINE, END]
+END = '\033[0m' # Reseta toda a formatação
+# Vetor completo
+COLORS = [PURPLE, CYAN, DARKCYAN, BLUE, GREEN, YELLOW, RED, MAGENTA, BLACK, BRIGHTBLACK, WHITE, BLINK, BOLD, UNDERLINE, END]
 
 STARTING_ARMIES = 3 # Número de tropas que cada player inicia
 
@@ -590,7 +593,7 @@ def clear(): # Limpa o terminal
     os.system('cls' if os.name == 'nt' else 'clear')
 
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
-# Variáveis Globais ----------------------------------------------------------------------------------------------------------------------------------
+# Variáveis Globais do Mapa --------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 # ╚╔║╝╗═
