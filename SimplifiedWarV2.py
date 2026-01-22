@@ -18,11 +18,15 @@ DARKCYAN = '\033[36m'
 BLUE = '\033[94m'
 GREEN = '\033[92m'
 YELLOW = '\033[93m'
+BLACK = '\x1b[30m'
+BRIGHTBLACK   = '\033[30m'
+WHITE   = '\033[37m'
+MAGENTA = '\033[35m'
 RED = '\033[91m'
 BOLD = '\033[1m'
 UNDERLINE = '\033[4m'
 END = '\033[0m'
-COLORS = [PURPLE, CYAN, DARKCYAN, BLUE, GREEN, YELLOW, RED, BOLD, UNDERLINE, END]
+COLORS = [PURPLE, CYAN, DARKCYAN, BLUE, GREEN, YELLOW, RED, MAGENTA, BLACK, BRIGHTBLACK, WHITE, BOLD, UNDERLINE, END]
 
 STARTING_ARMIES = 3 # Número de tropas que cada player inicia
 
@@ -758,8 +762,12 @@ def main():
     playerBlue = player(color = BLUE)
     playerRed = player(color = RED)
     playerYellow = player(color = YELLOW)
+    #playerCyan = player(color = CYAN)
+    #playerPurple = player(color = PURPLE)
+    #playerBlack = player(color = BLACK)
 
     players=[playerGreen,playerBlue,playerRed,playerYellow] # Lista e ordem dos jogadores
+    #players=[playerGreen,playerBlue,playerRed,playerYellow, playerCyan, playerPurple, playerBlack]
 
     # Criando os territórios
     south_america = territory("América do Sul", south_america_fragment)
